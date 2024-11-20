@@ -70,11 +70,11 @@ Create the following **marts** to provide insights:
   - The highest number of trips.
   - The highest total revenue.
 
-#### C. **Driver/Rate Performance** [Bonus]
+#### C. **Driver/Rate Performance** [Mandatory]
 - Analyze **tips**:
   - Calculate the average tip percentage (`tip_amount / total_amount`) for each `VendorID`.
 
-#### D. **Distance Analysis** [Bonus]
+#### D. **Distance Analysis** [Mandatory]
 - Segment trips by distance (`trip_distance`):
   - **Short**: 0-2 miles.
   - **Medium**: 2-5 miles.
