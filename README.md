@@ -117,7 +117,7 @@ Here are examples of expected output tables:
 
 ### Submission
 
-1. Create a Git repository (with all commits).
+1. Fork this repository and start your work on a new branch.
 2. Include a `README.md` file with instructions on how to run the project.
 3. Submit the repository as a `git bundle` or share it via GitHub/GitLab.
 
