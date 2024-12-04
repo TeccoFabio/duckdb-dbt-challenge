@@ -121,6 +121,7 @@ Here are examples of expected output tables:
 $ uv venv
 $ source .venv/bin/activate
 $ uv sync
+$ wget https://github.com/duckdb/duckdb/releases/download/v1.1.3/duckdb_cli-linux-amd64.zip && unzip duckdb_cli-linux-amd64.zip && mv duckdb .venv/bin/
 $ uv run dbt run
 09:35:38  Running with dbt=1.8.8
 09:35:38  Registered adapter: duckdb=1.9.0
