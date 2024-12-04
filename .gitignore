@@ -6,7 +6,8 @@ dist/
 wheels/
 target/
 logs/
-data/
+data/db/
+data/raw/
 dbt_packages/
 *.egg-info
 
