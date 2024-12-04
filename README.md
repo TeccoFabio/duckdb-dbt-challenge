@@ -115,6 +115,31 @@ Here are examples of expected output tables:
 
 ---
 
+### Repo qick start
+
+```shell
+$ uv venv
+$ source .venv/bin/activate
+$ uv sync
+$ uv run dbt run
+09:35:38  Running with dbt=1.8.8
+09:35:38  Registered adapter: duckdb=1.9.0
+09:35:38  Found 1 model, 532 macros
+09:35:38
+09:35:39  Concurrency: 1 threads (target='dev')
+09:35:39
+09:35:39  1 of 1 START sql table model main.staging_yellow_tripdata ...................... [RUN]
+09:35:39  1 of 1 OK created sql table model main.staging_yellow_tripdata ................. [OK in 0.69s]
+09:35:39
+09:35:39  Finished running 1 table model in 0 hours 0 minutes and 0.93 seconds (0.93s).
+09:35:39
+09:35:39  Completed successfully
+09:35:39
+09:35:39  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
+
+$ uv run duckdb data/db/yellow_tripdata.duckdb "select  * from staging_yellow_tripdata limit 10"
+---
+
 ### Submission
 
 1. Fork this repository and start your work on a new branch.
