@@ -20,6 +20,13 @@ renamed AS (
             WHEN trip_distance > 5 THEN 'long'
             ELSE NULL
         END AS trip_segment,
+        CASE
+            WHEN date_part('hour', tpep_pickup_datetime) BETWEEN 5 AND 11 THEN 'morning'
+            WHEN date_part('hour', tpep_pickup_datetime) BETWEEN 12 AND 16 THEN 'afternoon'
+            WHEN date_part('hour', tpep_pickup_datetime) BETWEEN 17 AND 21 THEN 'evening'
+            WHEN date_part('hour', tpep_pickup_datetime) IN (22,23,0,1,2,3,4) THEN 'night'
+            ELSE NULL
+        END AS time_slot,
 
         --numerics
         CAST(passenger_count AS TINYINT) AS passenger_count,
