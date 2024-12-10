@@ -4,6 +4,9 @@
 # name or the intended use of these models
 name: 'challenge'
 version: '1.0.0'
+config-version: 2
+vars:
+  db_name: yellow_tripdata.duckdb
 
 # This setting configures which "profile" dbt uses for this project.
 profile: 'challenge'
@@ -30,5 +33,9 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   challenge:
+    raw:
+      +materialized: table
     staging:
       +materialized: view
+    marts:
+      +materialized: table

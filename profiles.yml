@@ -1,8 +1,8 @@
 challenge:
+  target: dev
   outputs:
     dev:
       type: duckdb
       path: "data/db/yellow_tripdata.duckdb"
       extensions:
-        - spatial
-  target: dev
+        - spatial  
