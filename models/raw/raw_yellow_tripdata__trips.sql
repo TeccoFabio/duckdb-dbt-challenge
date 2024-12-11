@@ -12,4 +12,4 @@ SELECT
     total_amount,
     payment_type
 FROM
-    "data/raw/yellow_tripdata_2024-01.parquet"
+    parquet_scan("data/raw/yellow_tripdata_2024-01.parquet")

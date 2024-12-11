@@ -5,5 +5,4 @@ sources:
    database: yellow_tripdata
    schema: main
    tables:
-     - name: stg_yellow_tripdata__trips
      - name: raw_yellow_tripdata__trips

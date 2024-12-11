@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: stg_yellow_tripdata__trips
+    columns:
+      - name: pickup_at
+        tests:
+          - not_null    
+      - name: total_amount
+        tests:
+          - not_null          
+      - name: time_slot
+        tests:
+          - accepted_values:
+              values: ['Morning', 'Afternoon', 'Evening', 'Night']
+      - name: pu_location_id
+        tests:
+          - not_null
+      - name: vendor_id
+        tests:
+          - not_null
+      - name: tip_amount
+        tests:
+          - not_null
+      - name: trip_segment
+        tests:
+          - accepted_values:
+              values: ['Short', 'Medium', 'Long']
+      - name: trip_duration
+        tests:
+          - not_null      
+            

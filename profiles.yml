@@ -5,4 +5,5 @@ challenge:
       type: duckdb
       path: "data/db/yellow_tripdata.duckdb"
       extensions:
-        - spatial  
+        - spatial
+        - parquet

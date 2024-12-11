@@ -42,7 +42,12 @@ trips AS (
     FROM 
         {{ source( "yellow_tripdata", "raw_yellow_tripdata__trips") }}            
     WHERE
-        trip_duration > 0.0 AND trip_distance > 0.0 AND total_amount > 0.0 AND passenger_count <= 4
+        (passenger_count BETWEEN 1 AND 4) AND
+        trip_duration > 0.0 AND
+        trip_distance > 0.0 AND
+        fare_amount >= 0.0 AND
+        tip_amount >= 0.0 AND
+        total_amount > 0.0
 )
 
 SELECT * FROM trips
