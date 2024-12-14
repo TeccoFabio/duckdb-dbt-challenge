@@ -1,13 +1,18 @@
 WITH
 trips AS (
     SELECT
+        --Nice to have
+        --CURRENT_TIMESTAMP()::TIMESTAMPTZ AS ingested_at
+
+        -- Logical key: (vendor_id, pickup_at)
+        -- This combination uniquely identifies each record
+
         --timestamps
-        tpep_pickup_datetime AS pickup_at,
-        tpep_dropoff_datetime AS dropoff_at,
+        tpep_pickup_datetime::TIMESTAMP AS pickup_at,
+        tpep_dropoff_datetime::TIMESTAMP AS dropoff_at,
 
         --ids
         VendorID AS vendor_id,
-        {{ dbt_utils.generate_surrogate_key(['vendor_id', 'pickup_at']) }} AS trip_id,
         CAST(RatecodeID AS INTEGER) AS rate_code_id,
         PULocationID AS pu_location_id,
 

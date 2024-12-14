@@ -2,31 +2,35 @@ version: 2
 
 models:
   - name: stg_yellow_tripdata__trips
+    data_tests:
+      - unique:
+            column_name: "(vendor_id || '-' || pickup_at)"
     columns:
       - name: pickup_at
-        tests:
+        data_tests:
           - not_null    
       - name: total_amount
-        tests:
+        data_tests:
           - not_null          
       - name: time_slot
-        tests:
+        data_tests:
           - accepted_values:
               values: ['Morning', 'Afternoon', 'Evening', 'Night']
       - name: pu_location_id
-        tests:
+        data_tests:
           - not_null
       - name: vendor_id
-        tests:
+        data_tests:
           - not_null
       - name: tip_amount
-        tests:
+        data_tests:
           - not_null
       - name: trip_segment
-        tests:
+        data_tests:
           - accepted_values:
               values: ['Short', 'Medium', 'Long']
       - name: trip_duration
-        tests:
-          - not_null      
+        data_tests:
+          - not_null
+
             
