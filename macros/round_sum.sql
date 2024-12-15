@@ -1,3 +1,3 @@
-{% macro round_sum(column) %}
-    ROUND(SUM({{column}}), 2)
+{% macro round_sum(column_name) %}
+    ROUND(SUM({{column_name}}), 2)
 {% endmacro %}

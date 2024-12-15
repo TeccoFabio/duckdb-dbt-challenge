@@ -1,156 +1,151 @@
 <img src="https://assets.website-files.com/61a888508b7cccb7485cdac2/61b31d9009792071f950394b_logo_dscovr.svg">
 
-# Data Engineer: DuckDB & DBT - Dynamic Data Modeling Challenge
+# Data Engineer: DuckDB & DBT - Dynamic Data Modeling Challenge (Solved)
 
-## Abstract
+## Overview
 
-This challenge tests your ability to work with data modeling, query optimization, and modern data tools like **DuckDB** and **DBT**. These tools are critical for the systems we build at [DSCOVR](https://dscovr.io), and this challenge will give us insight into your approach to building **staging models** and **data marts** from raw data.
-
-Take your time to read the challenge, and when you're ready, provide an estimate of how long it will take. If necessary, feel free to request an extension. This exercise is designed to be stimulating and fun, so push your boundaries and show off your skills!
-
-**Red 🔴 - Green ✅ - Refactor 📝 - and have fun.**
-
----
-## Objective
-
-The challenge is to create a data pipeline using **DBT** and **DuckDB**, starting from raw data, transforming it into staging models, and finally creating **data marts**. 
-
-Your goal is to build a **DBT project**:
-
-1. Use a **public dataset** (details provided below) as the raw data source.
-2. **Staging models**: to clean, normalize, and enrich the raw data.
-3. **Data marts**: to extract key metrics and generate insights for decision-making.
+This project uses **dbt** and **DuckDB** to transform raw data of the New York City Taxi Trips Dataset into four Data Marts models in order to solve the [challenge](https://github.com/dscovr/duckdb-dbt-challenge/tree/main). The pipeline is structured into four three phases: raw, staging, marts. Next, there are two additional bonus sections: implementing tests and displaying the results in table format.
 
 ---
 
-## Dataset
+## How to run the project
 
-We will use the **New York City Taxi Trips Dataset**, which contains trip records of taxis in NYC. This dataset is publicly available and can be downloaded using the following:
+### Prerequisites
 
-```shell
-$ wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet
+Ensure the following tools are installed and configured:
+- **Python >= 3.10**
+- **git**
+- **uv**
+- **wget**
+
+### Follow the steps below
+
+1. **Clone the right branch of the repository**:
+   ```bash
+   $ git clone --single-branch --branch sfida_accettata_Fabio_Tecco https://github.com/TeccoFabio/duckdb-dbt-challenge.git && cd duckdb-dbt-challenge/
+   ```
+
+2. **Create and activate a virtual environment**:
+   ```bash
+   $ uv venv && source .venv/bin/activate
+   ```
+
+3. **Install all packages needed**
+   ```bash
+   $ uv sync
+   ```
+
+4. **Install duckdb_cli for Linux**
+   ```bash
+   $ wget https://github.com/duckdb/duckdb/releases/download/v1.1.3/duckdb_cli-linux-amd64.zip && unzip duckdb_cli-linux-amd64.zip && mv duckdb .venv/bin/
+   ```
+
+5. **Download all the dependencies**
+   ```bash
+   $ uv run dbt deps 
+   ```
+
+6. **Download the New York City Taxi Trips Dataset**
+   ```bash
+   $ wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet -P data/raw
+   ```
+
+7. **Usage**
+   - To execute all models:
+      ```bash
+      $ uv run dbt run
+      ```
+   - To execute a specific model:
+     ```bash
+     $ uv run dbt run --select model_name
+     ```
+   
+
+---
+
+## Models
+
+### **Raw Model**
+
+**raw_yellow_tripdata__trips** is exclusively responsible for loading the data useful for the project from the Parquet file to a materialized table in DuckDB, ensuring traceability and enabling debugging.
+
+### **Staging Model**
+
+In the staging model, data from the raw model (defined as a source in **_yellow_tripdata__trips.yml**) is transformed (as a materialized view) to make it more useful and consistent for further analysis.  
+
+Specifically, the **stg_yellow_tripdata__trips** model:  
+- renames fields to provide clearer names;  
+- standardizes dates to the `TIMESTAMP` type;  
+- converts some fields saved in overly large data types to optimize storage;  
+- classifies distances into three **trip_segment** categories;  
+- divides the day into four **time_slot** categories;  
+- calculates trip duration in minutes using the `FLOAT` type to retain precision;  
+- creates a boolean flag **is_prepaid** to identify pre-paid trips.  
+
+In the `WHERE` clause, rows with inconsistent data are filtered out, such as:  
+- passenger counts not between 1 and 4, as New York City taxis can carry a maximum of 4 passengers;  
+- other fields with negative values.
+
+### **Marts Models**
+
+Mart models are designed to support key KPIs and final reporting of the results, and are materialized as tables.
+
+All four models have in the `FROM` clause the reference to the staging model, using the Jinja function **{{ref}}**.
+
+Since it was repeated in two data marts, a macro was created to simultaneously perform the `ROUND` and `SUM` of a field placed under `GROUP BY`.
+
+To identify the top 5 Pickup Zones in the **Top_5_Pickup_Zones** model, it was decided to use the window function `RAN()` combined with the `QUALIFY` clause instead of first using an `ORDER BY` and then a `LIMIT`. This was done to make the SQL code more readable and scalable (`ORDER BY` + `LIMIT` is less maintainable when more complex rules are added). 
+
+---
+
+## How to run tests
+
+### Types of tests included:
+1. **Not null tests**:
+   Validates that critical fields are not null. Example:
+   ```yml
+   - name: vendor_id
+        data_tests:
+          - not_null
+   ```
+2. **Accepted values tests**
+   Validates that all of the values in a column are present in a supplied list of values. Example:
+   ```yml
+   - name: time_slot
+        data_tests:
+          - accepted_values:
+              values: ['Morning', 'Afternoon', 'Evening', 'Night']
+   ```
+
+### Run all tests
+Use the following command to run all tests:
+```bash
+$ uv run dbt test
 ```
 
-**Key Columns**:
-- `VendorID`: ID of the provider.
-- `tpep_pickup_datetime`, `tpep_dropoff_datetime`: trip start and end timestamps.
-- `passenger_count`: number of passengers.
-- `trip_distance`: distance of the trip in miles.
-- `RatecodeID`: rate code.
-- `fare_amount`: trip fare.
-- `tip_amount`: tip amount.
-- `total_amount`: total paid.
-- And other useful columns for metric calculations.
-
 ---
 
-## Tasks: Required Models
+## Displaying results
 
-### 1. **Staging Models** [Mandatory]
-Create staging models to clean and enrich the data by:
-- **Timestamp formatting**: Standardize date/time formats and calculate:
-  - Trip duration in minutes.
-- **Data cleaning**: Remove rows with implausible values (e.g., negative `trip_distance`, `total_amount` ≤ 0).
-- **Additional flags**:
-  - Identify if the trip was prepaid (`payment_type` = 2).
-  - Classify trips based on distance (e.g., short, medium, long).
+Use the following commands to view the final results:
 
-### 2. **Data Marts**
-Create the following **marts** to provide insights:
+1. **Trips by Time of Day**
+   ```bash
+   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT time_slot AS 'Time Slot', printf('%,d', total_trip) AS 'Total Trip', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Trips_by_Time_of_Day ORDER BY CASE time_slot WHEN 'Morning' THEN 1 WHEN 'Afternoon' THEN 2 WHEN 'Evening' THEN 3 WHEN 'Night' THEN 4 END;" --box
+   ```
 
-#### A. **Trips by Time of Day** [Mandatory]
-- Calculate the total number of trips and total revenue (`total_amount`) for different time slots:
-  - Morning (5:00-12:00)
-  - Afternoon (12:00-17:00)
-  - Evening (17:00-22:00)
-  - Night (22:00-5:00)
+2. **Top 5 Pickup Zones**
+   ```bash
+   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT pu_location_id AS 'Top 5 Pickup Zone', printf('%,d', total_trips) AS 'Total Trip', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Top_5_Pickup_Zones" --box
+   ```
 
-#### B. **Top 5 Pickup Zones** [Mandatory]
-- Identify the top 5 pickup zones (`PULocationID`) with:
-  - The highest number of trips.
-  - The highest total revenue.
+3. **Driver/Rate Performance**
+   ```bash
+   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT vendor_id AS 'Provider', CONCAT(average_tip_percentage, '%') AS 'Average Tip Percentage' FROM Driver_Performance" --box
+   ```
 
-#### C. **Driver/Rate Performance** [Mandatory]
-- Analyze **tips**:
-  - Calculate the average tip percentage (`tip_amount / total_amount`) for each `VendorID`.
+4. **Distance Analysis**
+   ```bash
+   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT trip_segment AS 'Trip Segment', CONCAT(average_trip_duration, ' minutes') AS 'Average Trip Duration', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Distance_Analysis" --box
+   ```
 
-#### D. **Distance Analysis** [Mandatory]
-- Segment trips by distance (`trip_distance`):
-  - **Short**: 0-2 miles.
-  - **Medium**: 2-5 miles.
-  - **Long**: >5 miles.
-- Calculate the average trip duration and total revenue for each segment.
-
----
-
-## Evaluation Criteria
-
-1. **Clean and structured DBT project**:
-   - Clear and well-organized models (raw, staging, marts).
-   - Use of **DBT macros** to avoid repetitive logic.
-2. **Query performance**:
-   - Optimization of SQL queries for DuckDB.
-3. **Documentation**:
-   - A clear **README.md** explaining:
-     - How to run the project.
-     - Choices made in staging and marts models.
-     - How to run any included tests.
-4. **Bonus**:
-   - Implementation of DBT tests (`unique`, `not null`, etc.).
-   - Inclusion of visualizations for results (optional).
-
----
-
-## Example Outputs
-
-Here are examples of expected output tables:
-
-### **A. Trips by Time of Day**
-| Time Slot    | Total Trips | Total Revenue |
-|--------------|-------------|---------------|
-| Morning      | 1,234       | $12,345.67    |
-| Afternoon    | 2,345       | $23,456.78    |
-| Evening      | 3,456       | $34,567.89    |
-| Night        | 1,123       | $11,234.56    |
-
----
-
-### Repo qick start
-
-```shell
-$ uv venv
-$ source .venv/bin/activate
-$ uv sync
-$ wget https://github.com/duckdb/duckdb/releases/download/v1.1.3/duckdb_cli-linux-amd64.zip && unzip duckdb_cli-linux-amd64.zip && mv duckdb .venv/bin/
-$ uv run dbt deps 
-$ wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet -P data/raw
-$ uv run dbt run
-09:35:38  Running with dbt=1.8.8
-09:35:38  Registered adapter: duckdb=1.9.0
-09:35:38  Found 1 model, 532 macros
-09:35:38
-09:35:39  Concurrency: 1 threads (target='dev')
-09:35:39
-09:35:39  1 of 1 START sql table model main.staging_yellow_tripdata ...................... [RUN]
-09:35:39  1 of 1 OK created sql table model main.staging_yellow_tripdata ................. [OK in 0.69s]
-09:35:39
-09:35:39  Finished running 1 table model in 0 hours 0 minutes and 0.93 seconds (0.93s).
-09:35:39
-09:35:39  Completed successfully
-09:35:39
-09:35:39  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
-
-$ uv run duckdb data/db/yellow_tripdata.duckdb "select  * from staging_yellow_tripdata limit 10"
----
-
-### Submission
-
-1. Fork this repository and start your work on a new branch.
-2. Include a `README.md` file with instructions on how to run the project.
-3. Submit the repository as a `git bundle` or share it via GitHub/GitLab.
-
----
-
-## Contacts
-
-For questions or clarifications: [https://linktr.ee/mauro.malvestio](https://linktr.ee/mauro.malvestio)

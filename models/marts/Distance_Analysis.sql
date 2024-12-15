@@ -6,4 +6,3 @@ FROM
     {{ref('stg_yellow_tripdata__trips')}}
 GROUP BY 
     trip_segment
-

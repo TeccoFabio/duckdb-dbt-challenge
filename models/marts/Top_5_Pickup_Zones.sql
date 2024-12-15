@@ -13,6 +13,11 @@ QUALIFY
     rank <= 5
 
 /*
+
+At first I thought they wanted something more complex, a table with 2 columns:
+- one with the 5 zones with the highest number of trips;
+- another with the 5 zones with the highest total amounts.
+
 WITH
 top_trips_top_revenue AS (
     SELECT

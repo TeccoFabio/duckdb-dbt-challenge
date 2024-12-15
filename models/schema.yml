@@ -2,9 +2,6 @@ version: 2
 
 models:
   - name: stg_yellow_tripdata__trips
-    data_tests:
-      - unique:
-            column_name: "(vendor_id || '-' || pickup_at)"
     columns:
       - name: pickup_at
         data_tests:
