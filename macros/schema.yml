@@ -1,0 +1,9 @@
+version: 2
+
+macros:
+  - name: round_sum
+    description: A macro to sum the values of a field and round to two decimal places
+    arguments:
+      - name: column_name
+        type: string
+        description: The name of the column you want to sum and round
