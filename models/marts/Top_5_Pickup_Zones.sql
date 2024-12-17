@@ -1,16 +1,17 @@
 SELECT 
     pu_location_id,
     COUNT(*) AS total_trips,
-    SUM(total_amount) AS total_revenue,
-    RANK() OVER (
-        ORDER BY COUNT(*) DESC, SUM(total_amount) DESC
-    ) AS rank
+    SUM(total_amount) AS total_revenue
 FROM
     {{ref('stg_yellow_tripdata__trips')}}
 GROUP BY
     pu_location_id
-QUALIFY
-    rank <= 5
+ORDER BY
+    COUNT(*) DESC, SUM(total_amount) DESC
+LIMIT
+    5
+
+
 
 /*
 

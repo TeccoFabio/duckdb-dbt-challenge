@@ -4,7 +4,7 @@
 
 ## Overview
 
-This project uses **dbt** and **DuckDB** to transform raw data of the New York City Taxi Trips Dataset into four Data Marts models in order to solve the [challenge](https://github.com/dscovr/duckdb-dbt-challenge/tree/main). The pipeline is structured into four three phases: raw, staging, marts. Next, there are two additional bonus sections: implementing tests and displaying the results in table format.
+This project uses **dbt** and **DuckDB** to transform raw data of the New York City Taxi Trips Dataset into four Data Marts models in order to solve the [challenge](https://github.com/dscovr/duckdb-dbt-challenge/tree/main). The pipeline is structured into three phases: raw, staging, marts. Next, there are two additional bonus sections: implementing tests and displaying the results in table format.
 
 ---
 
@@ -20,9 +20,9 @@ Ensure the following tools are installed and configured:
 
 ### Follow the steps below
 
-1. **Clone the right branch of the repository**:
+1. **Clone the repository**:
    ```bash
-   $ git clone --single-branch --branch sfida_accettata_Fabio_Tecco https://github.com/TeccoFabio/duckdb-dbt-challenge.git && cd duckdb-dbt-challenge/
+   $ git clone https://github.com/TeccoFabio/duckdb-dbt-challenge.git && cd duckdb-dbt-challenge/
    ```
 
 2. **Create and activate a virtual environment**:
@@ -71,7 +71,7 @@ Ensure the following tools are installed and configured:
 
 ### **Staging Model**
 
-In the staging model, data from the raw model (defined as a source in **_yellow_tripdata__trips.yml**) is transformed (as a materialized view) to make it more useful and consistent for further analysis.  
+In the staging model, data from the raw model (defined as a source in **_yellow_tripdata__trips.yml**) is transformed (as a materialized view) to make it more useful and consistent for further analysis.
 
 Specifically, the **stg_yellow_tripdata__trips** model:  
 - renames fields to provide clearer names;  
@@ -88,17 +88,17 @@ In the `WHERE` clause, rows with inconsistent data are filtered out, such as:
 
 ### **Marts Models**
 
-Mart models are designed to support key KPIs and final reporting of the results, and are materialized as tables.
+Mart models are designed to support key KPIs and final reporting of the results, so they are materialized as tables.
 
 All four models have in the `FROM` clause the reference to the staging model, using the Jinja function **{{ref}}**.
 
 Since it was repeated in two data marts, a macro was created to simultaneously perform the `ROUND` and `SUM` of a field placed under `GROUP BY`.
 
-To identify the top 5 Pickup Zones in the **Top_5_Pickup_Zones** model, it was decided to use the window function `RAN()` combined with the `QUALIFY` clause instead of first using an `ORDER BY` and then a `LIMIT`. This was done to make the SQL code more readable and scalable (`ORDER BY` + `LIMIT` is less maintainable when more complex rules are added). 
-
 ---
 
 ## How to run tests
+
+They are in models/schema.yml.
 
 ### Types of tests included:
 1. **Not null tests**:
@@ -141,7 +141,7 @@ Use the following commands to view the final results:
 
 3. **Driver/Rate Performance**
    ```bash
-   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT vendor_id AS 'Provider', CONCAT(average_tip_percentage, '%') AS 'Average Tip Percentage' FROM Driver_Performance" --box
+   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT vendor_id AS 'Provider', CONCAT(average_tip_percentage, '%') AS 'Average Tip Percentage' FROM Provider_Performance" --box
    ```
 
 4. **Distance Analysis**
@@ -149,3 +149,10 @@ Use the following commands to view the final results:
    $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT trip_segment AS 'Trip Segment', CONCAT(average_trip_duration, ' minutes') AS 'Average Trip Duration', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Distance_Analysis" --box
    ```
 
+## Contact
+
+For questions, you can reach me at:
+- **Email**: fabio.tecco@tim.it
+- **GitHub**: [TeccoFabio](https://github.com/TeccoFabio)
+
+---
