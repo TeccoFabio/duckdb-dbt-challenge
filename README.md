@@ -22,45 +22,44 @@ Ensure the following tools are installed and configured:
 
 1. **Clone the repository**:
    ```bash
-   $ git clone https://github.com/TeccoFabio/duckdb-dbt-challenge.git && cd duckdb-dbt-challenge/
+   git clone https://github.com/TeccoFabio/duckdb-dbt-challenge.git && cd duckdb-dbt-challenge/
    ```
 
 2. **Create and activate a virtual environment**:
    ```bash
-   $ uv venv && source .venv/bin/activate
+   uv venv && source .venv/bin/activate
    ```
 
 3. **Install all packages needed**
    ```bash
-   $ uv sync
+   uv sync
    ```
 
 4. **Install duckdb_cli for Linux**
    ```bash
-   $ wget https://github.com/duckdb/duckdb/releases/download/v1.1.3/duckdb_cli-linux-amd64.zip && unzip duckdb_cli-linux-amd64.zip && mv duckdb .venv/bin/
+   wget https://github.com/duckdb/duckdb/releases/download/v1.1.3/duckdb_cli-linux-amd64.zip && unzip duckdb_cli-linux-amd64.zip && mv duckdb .venv/bin/
    ```
 
 5. **Download all the dependencies**
    ```bash
-   $ uv run dbt deps 
+   uv run dbt deps 
    ```
 
 6. **Download the New York City Taxi Trips Dataset**
    ```bash
-   $ wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet -P data/raw
+   wget https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet -P data/raw
    ```
 
 7. **Usage**
    - To execute all models:
       ```bash
-      $ uv run dbt run
+      uv run dbt run
       ```
    - To execute a specific model:
-     ```bash
-     $ uv run dbt run --select model_name
-     ```
+      ```bash
+      uv run dbt run --select model_name
+      ```
    
-
 ---
 
 ## Models
@@ -120,7 +119,7 @@ They are in models/schema.yml.
 ### Run all tests
 Use the following command to run all tests:
 ```bash
-$ uv run dbt test
+uv run dbt test
 ```
 
 ---
@@ -131,22 +130,22 @@ Use the following commands to view the final results:
 
 1. **Trips by Time of Day**
    ```bash
-   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT time_slot AS 'Time Slot', printf('%,d', total_trip) AS 'Total Trip', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Trips_by_Time_of_Day ORDER BY CASE time_slot WHEN 'Morning' THEN 1 WHEN 'Afternoon' THEN 2 WHEN 'Evening' THEN 3 WHEN 'Night' THEN 4 END;" --box
+   uv run duckdb data/db/yellow_tripdata.duckdb "SELECT time_slot AS 'Time Slot', printf('%,d', total_trip) AS 'Total Trip', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Trips_by_Time_of_Day ORDER BY CASE time_slot WHEN 'Morning' THEN 1 WHEN 'Afternoon' THEN 2 WHEN 'Evening' THEN 3 WHEN 'Night' THEN 4 END;" --box
    ```
 
 2. **Top 5 Pickup Zones**
    ```bash
-   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT pu_location_id AS 'Top 5 Pickup Zone', printf('%,d', total_trips) AS 'Total Trip', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Top_5_Pickup_Zones" --box
+   uv run duckdb data/db/yellow_tripdata.duckdb "SELECT pu_location_id AS 'Top 5 Pickup Zone', printf('%,d', total_trips) AS 'Total Trip', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Top_5_Pickup_Zones" --box
    ```
 
 3. **Driver/Rate Performance**
    ```bash
-   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT vendor_id AS 'Provider', CONCAT(average_tip_percentage, '%') AS 'Average Tip Percentage' FROM Provider_Performance" --box
+   uv run duckdb data/db/yellow_tripdata.duckdb "SELECT vendor_id AS 'Provider', CONCAT(average_tip_percentage, '%') AS 'Average Tip Percentage' FROM Provider_Performance" --box
    ```
 
 4. **Distance Analysis**
    ```bash
-   $ uv run duckdb data/db/yellow_tripdata.duckdb "SELECT trip_segment AS 'Trip Segment', CONCAT(average_trip_duration, ' minutes') AS 'Average Trip Duration', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Distance_Analysis" --box
+   uv run duckdb data/db/yellow_tripdata.duckdb "SELECT trip_segment AS 'Trip Segment', CONCAT(average_trip_duration, ' minutes') AS 'Average Trip Duration', printf('$%,.2f', total_revenue) AS 'Total Revenue' FROM Distance_Analysis" --box
    ```
 
 ## Contact
